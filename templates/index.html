@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salary Predictor</title>
+    <style>
+        body {
+            font-family: Arial;
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Salary Predictor</h2>
+    <form method="POST" action="/predict">
+        <label for="education">Education Level:</label>
+        <select name="education" required>
+            <option value="Bachelors">Bachelors</option>
+            <option value="Masters">Masters</option>
+            <option value="PhD">PhD</option>
+            <option value="12th">12th</option>
+            <option value="10th">10th</option>
+        </select>
+
+        <label for="experience">Experience (years):</label>
+        <input type="number" name="experience" required>
+
+        <label for="job">Job Title:</label>
+        <input type="text" name="job" required>
+
+        <label for="age">Age:</label>
+        <input type="number" name="age" required>
+
+        <label for="gender">Gender:</label>
+        <select name="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+
+        <button type="submit">Predict Salary</button>
+    </form>
+
+    {% if prediction %}
+        <h3>Predicted Salary: ₹{{ prediction }}</h3>
+    {% endif %}
+</body>
+</html>

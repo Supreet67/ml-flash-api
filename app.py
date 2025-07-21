@@ -1,29 +1,41 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import pickle
+import numpy as np
 
 app = Flask(__name__)
 
-# Load your trained model
-with open('model.pkl', 'rb') as f:
-    model = pickle.load(f)
+# Load model
+model = pickle.load(open("model.pkl", "rb"))
 
 @app.route('/')
 def home():
-    return "ML Model API is running!"
+    return render_template("index.html")
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=["POST"])
 def predict():
-    data = request.get_json(force=True)  # expects JSON input
-    
-    # Example: Suppose your model expects a list of features like [feat1, feat2, feat3]
-    features = data['features']  # make sure client sends {"features": [values]}
-    
-    # Predict using your model
-    prediction = model.predict([features])
-    
-    # Return prediction as JSON
-    return jsonify({'prediction': prediction.tolist()})
+    education = request.form["education"]
+    experience = int(request.form["experience"])
+    job = request.form["job"]
+    age = int(request.form["age"])
+    gender = request.form["gender"]
+
+    # Convert to numerical features — adjust as per your ML preprocessing
+    # You must encode string features the same way you did during training!
+    # Here’s just an example (update this as per your model):
+    edu_map = {'10th': 0, '12th': 1, 'Bachelors': 2, 'Masters': 3, 'PhD': 4}
+    gender_map = {'Male': 0, 'Female': 1}
+
+    features = [
+        age,
+        edu_map.get(education, 0),
+        experience,
+        gender_map.get(gender, 0),
+        len(job) % 10  # dummy encoding for job title, update as needed
+    ]
+
+    prediction = model.predict([features])[0]
+
+    return render_template("index.html", prediction=round(prediction, 2))
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=10000)
-
+    app.run(debug=True)
